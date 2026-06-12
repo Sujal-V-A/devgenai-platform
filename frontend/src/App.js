@@ -2286,16 +2286,18 @@ function App() {
             <FaRobot className="robotLogo" />
             <h1 className="logo">DevGenAI</h1>
           </div>
-          <div 
-            className={`demoToggleContainer ${demoMode ? 'demoActive' : 'liveActive'}`} 
-            onClick={toggleDemoMode}
-            title="Click to toggle Demo Mode (simulated in-browser environment) vs Live Mode (connecting to localhost:5000)"
-          >
-            <span className="demoIndicatorDot"></span>
-            <span className="demoToggleLabel">
-              {demoMode ? "✨ Demo Mode" : "🔌 Live Node"}
-            </span>
-          </div>
+          {window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" && (
+            <div 
+              className={`demoToggleContainer ${demoMode ? 'demoActive' : 'liveActive'}`} 
+              onClick={toggleDemoMode}
+              title="Click to toggle Demo Mode (simulated in-browser environment) vs Live Mode (connecting to localhost:5000)"
+            >
+              <span className="demoIndicatorDot"></span>
+              <span className="demoToggleLabel">
+                {demoMode ? "✨ Demo Mode" : "🔌 Live Node"}
+              </span>
+            </div>
+          )}
           <ul>
             <li>
               <Link to="/"><FaCloud /> Dashboard</Link>

@@ -12,7 +12,12 @@ if (window.location.hostname !== "localhost" && window.location.hostname !== "12
 }
 
 // Check helper
-const isDemoModeActive = () => localStorage.getItem("demoMode") === "true";
+const isDemoModeActive = () => {
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return false;
+  }
+  return localStorage.getItem("demoMode") === "true";
+};
 
 // Helper to notify the App of state transitions
 const triggerDemoModeChange = () => {
@@ -942,7 +947,8 @@ axios.defaults.adapter = async function (config) {
     throw new Error("Axios default adapter not found");
   } catch (error) {
     // Intercept network/connection errors and auto fall back
-    if (error.message === "Network Error" || error.code === "ERR_NETWORK" || error.message.includes("network")) {
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (!isLocal && (error.message === "Network Error" || error.code === "ERR_NETWORK" || error.message.includes("network"))) {
       console.warn("[Demo Interceptor] Live backend is unreachable. Activating Demo Mode automatically.");
       localStorage.setItem("demoMode", "true");
       triggerDemoModeChange();
@@ -986,7 +992,8 @@ window.fetch = async function (input, init) {
   try {
     return await originalFetch(input, init);
   } catch (error) {
-    if (error.message === "Failed to fetch" || error.message.includes("fetch") || error.message.includes("NetworkError")) {
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    if (!isLocal && (error.message === "Failed to fetch" || error.message.includes("fetch") || error.message.includes("NetworkError"))) {
       console.warn("[Demo Fetch Interceptor] Live backend is unreachable. Activating Demo Mode automatically.");
       localStorage.setItem("demoMode", "true");
       triggerDemoModeChange();
