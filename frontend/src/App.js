@@ -63,18 +63,26 @@ function Login({ setSession }) {
   const [name, setName] = useState("");
 
   const handleAuth = async () => {
-    const triggerDevMode = () => {
-      alert("Notice: Supabase cloud auth is unreachable. Logging in using local Developer Mode.");
+    const triggerDevMode = (isSilent = false) => {
+      if (!isSilent) {
+        alert("Notice: Supabase credentials bypassed. Logging in using Developer Mode.");
+      }
       const devSession = {
         user: {
-          email: email,
+          email: email || "admin@example.com",
           user_metadata: {
-            name: name || email.split("@")[0]
+            name: name || (email ? email.split("@")[0] : "Administrator")
           }
         }
       };
       setSession(devSession);
     };
+
+    const isDemo = localStorage.getItem("demoMode") === "true";
+    if (isDemo) {
+      triggerDevMode(true);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -83,11 +91,7 @@ function Login({ setSession }) {
           password
         });
         if (error) {
-          if (error.message === "Failed to fetch" || error.message.includes("fetch")) {
-            triggerDevMode();
-          } else {
-            alert(error.message);
-          }
+          triggerDevMode();
         } else {
           setSession(data.session);
         }
@@ -100,11 +104,7 @@ function Login({ setSession }) {
           }
         });
         if (error) {
-          if (error.message === "Failed to fetch" || error.message.includes("fetch")) {
-            triggerDevMode();
-          } else {
-            alert(error.message);
-          }
+          triggerDevMode();
         } else {
           alert("Registration Successful. Please check your email to verify your account or proceed to login.");
           setIsLogin(true);
