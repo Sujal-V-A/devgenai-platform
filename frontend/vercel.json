@@ -1,0 +1,7 @@
+{
+  "name": "devgenai-platform",
+  "framework": "create-react-app",
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "cleanUrls": true
+}
